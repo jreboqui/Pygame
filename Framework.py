@@ -32,10 +32,11 @@ FPS = 15
 
 font = pygame.font.SysFont(None, 20)  #25, the second parameter is the font size
 
-def snake(lead_x,lead_y, block_size, block_size):
-    #parameters for draw.rect - see documentation
-    pygame.draw.rect(gameDisplay, green, [lead_x,lead_y, block_size, block_size])   
-
+def snake(block_size, snakeList):
+    for XnY in snakeList:
+        pygame.draw.rect(gameDisplay, green, [XnY[0],XnY[1], block_size, block_size])   
+        #parameters for draw.rect - see documentation
+        
 
 def message_to_screen(msg,color):
     screen_text = font.render(msg, True, color)
@@ -51,6 +52,9 @@ def gameLoop():
     lead_x_change = 0
     lead_y_change = 0
 
+    snakeList = []
+    snakeLength = 1
+    
     randAppleX = random.randrange(0, display_width-block_size, block_size)
     randAppleY = random.randrange(0, display_height-block_size, block_size)
     
@@ -88,14 +92,7 @@ def gameLoop():
 
         if lead_x >= display_width or lead_x < 0 or lead_y >= display_height or lead_y < 0:
             gameOver = True
-        
-
-        
-    ##    THIS AIN'T FUCKING NEEDED, JUST GOOD TO KNOW            
-    ##        if event.type == pygame.KEYUP:
-    ##            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-    ##                lead_x_change = 0
-    ##                lead_y_change = 0
+     
 
                     
         lead_x += lead_x_change
@@ -103,7 +100,18 @@ def gameLoop():
         gameDisplay.fill(white)
         #render other graphics here
         pygame.draw.rect(gameDisplay, red, [randAppleX, randAppleY, block_size, block_size])
-        snake(lead_x,lead_y, block_size, block_size)
+
+        
+        snakeHead = []
+        snakeHead.append(lead_x)
+        snakeHead.append(lead_y)
+        snakeList.append(snakeHead)
+
+        if len(snakeList) > snakeLength:
+            del snakeList[0]
+        snake(block_size, snakeList)
+
+        
         pygame.display.update()
 
         if lead_x == randAppleX and lead_y == randAppleY:
